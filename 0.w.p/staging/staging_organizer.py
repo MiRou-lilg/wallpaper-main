@@ -6,7 +6,7 @@ from PIL import Image
 from sklearn.cluster import KMeans
 
 # 1. Base Directory Paths
-BASE_DIR = r"D:\wallpapers\0.w.p"
+BASE_DIR = r"D:\wallpapers\wallpaper-main\0.w.p"
 STAGING_DIR = os.path.join(BASE_DIR, "staging")
 
 # 2. Strict Mapping for Categories
