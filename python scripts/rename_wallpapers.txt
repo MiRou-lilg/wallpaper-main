@@ -1,0 +1,23 @@
+Here is a Python script that uses a local AI model (BLIP) to automatically look at every image in your folder, figure out what's in it, and rename it with a short, descriptive file name!
+
+
+
+
+How It Works
+
+    It scans your folder D:\wallpapers\2.0 for image files (.jpg, .png, .jpeg, .webp).
+
+    It uses a lightweight, free AI vision model (which runs locally on your computer) to describe each image.
+
+    It converts the description into a clean file name (e.g., neon_cyberpunk_city_at_night.jpg).
+
+    If two images get similar names, it automatically appends a number (e.g., _1, _2) so nothing gets overwritten.
+
+
+
+
+
+
+
+
+open each script .py with notepad to modify the path of neded target

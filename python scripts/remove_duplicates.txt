@@ -1,0 +1,7 @@
+Here is a Python script that finds exact duplicate images using MD5 hashing (which reads the actual file content) and deletes the duplicates while keeping just one copy.
+
+It’s fast, reliable, and won't delete non-duplicate files even if they have similar names.
+
+
+
+open each script .py with notepad to modify the path of neded target

@@ -1,0 +1,31 @@
+make a script to rename based on category and numbering and examine file  :  
+add main 2 colors in (..) in hex code so i can use them later in my style example in pics i sent you :
+dont add any description only where i put -d-(anime art and other )
+only 
+
+
+
+
+01-abstract-(2maincolors). 
+                                                               
+ 01-anime-art--d-(2main colors).
+01-space-(2main colors) . 
+
+
+                            
+ 01anime-girl-(2main colors).  
+                                                                        
+01-cyberneon-(2main colors).                                                                  
+01-fantasy-(2main colors).
+  
+                                                                      
+01-nature-city-(2main colors). 
+                                                                                                   01-room-window-(2main colors).
+01-sky-(2main colors).
+01-visual-art-(2main colors) .  
+01-other-d-(2main colors). 
+
+
+  give python code to do these ,    dont merge folders 
+
+this is the path D:\wallpapers\0.w.p                                                                 

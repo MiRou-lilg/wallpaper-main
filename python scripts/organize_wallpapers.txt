@@ -1,0 +1,19 @@
+What This Script Will Do:
+
+    Categorizes your wallpapers: It inspects each image and tags it with a clear category like Nature, Anime, SciFi, Abstract, Architecture, or General.
+
+    Standardizes the file format:
+    [Category] - [Number] - [Description].[ext]
+
+    Example output file names:
+
+        Nature - 001 - sunset over mountains.jpg
+
+        SciFi - 002 - cyberpunk futuristic city.jpg
+
+        Anime - 003 - character in rain.jpg
+
+
+
+
+open each script .py with notepad to modify the path of neded target
