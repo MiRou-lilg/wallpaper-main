@@ -9,21 +9,20 @@ from sklearn.cluster import KMeans
 BASE_DIR = r"D:\wallpapers\wallpaper-main\0.w.p"
 STAGING_DIR = os.path.join(BASE_DIR, "staging")
 
-# 2. Strict Mapping for Categories
-# Keys: What you write in the filename before '-d-' or as the filename
-# Values: (Destination Folder Name, Prefix, Include Description Tag)
+# 2. Category Mapping
+# Format: "key": ("Folder Name", "Category Slug", Include Description Tag)
 CATEGORY_MAP = {
-    "abstract": ("Abstract", "01-abstract", False),
-    "anime girl": ("anime girl", "01-anime-girl", False),
-    "anime art": ("anime-stylish color art", "01-anime-art", True),
-    "cyberneon": ("cyber-neon", "01-cyberneon", False),
-    "fantasy": ("fnatasy", "01-fantasy", False),
-    "nature city": ("nature-city-animal", "01-nature-city", False),
-    "room window": ("room-window", "01-room-window", False),
-    "sky": ("sky", "01-sky", False),
-    "space": ("space", "01-space", False),
-    "visual art": ("visula art", "01-visual-art", False),
-    "other": ("other", "01-other", True)
+    "abstract": ("Abstract", "abstract", False),
+    "anime girl": ("anime girl", "anime-girl", False),
+    "anime art": ("anime-stylish color art", "anime-art", True),
+    "cyberneon": ("cyber-neon", "cyberneon", False),
+    "fantasy": ("fantasy", "fantasy", False),
+    "nature city": ("nature-city-animal", "nature-city", False),
+    "room window": ("room-window", "room-window", False),
+    "sky": ("sky", "sky", False),
+    "space": ("space", "space", False),
+    "visual art": ("visual art", "visual-art", False),
+    "other": ("other", "other", True)
 }
 
 def extract_main_colors(image_path, num_colors=2):
@@ -46,11 +45,29 @@ def extract_main_colors(image_path, num_colors=2):
         print(f"Error extracting colors from {image_path}: {e}")
         return ["#000000", "#ffffff"]
 
+def get_next_sequence_number(target_dir_path):
+    """Scans target folder and finds the highest leading number to compute next sequence index."""
+    if not os.path.exists(target_dir_path):
+        return 1
+        
+    valid_extensions = ('.jpg', '.jpeg', '.png', '.webp', '.bmp')
+    max_num = 0
+    
+    for fname in os.listdir(target_dir_path):
+        if os.path.isfile(os.path.join(target_dir_path, fname)) and fname.lower().endswith(valid_extensions):
+            match = re.match(r"^(\d+)", fname)
+            if match:
+                num = int(match.group(1))
+                if num > max_num:
+                    max_num = num
+                    
+    return max_num + 1
+
 def process_staging():
     if not os.path.exists(STAGING_DIR):
         os.makedirs(STAGING_DIR)
         print(f"Created staging folder at: {STAGING_DIR}")
-        print("Put your files inside 'staging' named like: 'abstract.jpg' or 'anime art -d- my_art.png'")
+        print("Put your files inside 'staging' named like: 'space.jpg' or 'anime art -d- my_art.png'")
         return
 
     valid_extensions = ('.jpg', '.jpeg', '.png', '.webp', '.bmp')
@@ -67,8 +84,7 @@ def process_staging():
         file_path = os.path.join(STAGING_DIR, file_name)
         name_without_ext, ext = os.path.splitext(file_name)
 
-        # Parse category and optional description from filename
-        # Expected format: "category" OR "category -d- description"
+        # Parse category and optional description
         if "-d-" in name_without_ext:
             parts = name_without_ext.split("-d-", 1)
             raw_cat = parts[0].strip().lower()
@@ -77,49 +93,38 @@ def process_staging():
             raw_cat = name_without_ext.strip().lower()
             description = ""
 
-        # Normalize category name separators (underscores/dashes to spaces)
         raw_cat_clean = re.sub(r'[\-_]', ' ', raw_cat).strip()
 
-        # Route file based on your input
+        # Target category resolution
         if raw_cat_clean in CATEGORY_MAP:
-            target_folder, cat_prefix, include_desc = CATEGORY_MAP[raw_cat_clean]
+            target_folder, cat_slug, include_desc = CATEGORY_MAP[raw_cat_clean]
         else:
-            # Fallback if category name isn't recognized
-            print(f"⚠️ Category '{raw_cat}' not recognized for file '{file_name}'. Defaulting to 'other'.")
-            target_folder, cat_prefix, include_desc = CATEGORY_MAP["other"]
+            print(f"⚠️ Category '{raw_cat}' not recognized. Defaulting to 'other'.")
+            target_folder, cat_slug, include_desc = CATEGORY_MAP["other"]
             description = description if description else raw_cat
 
-        # Destination Folder Path
         target_dir_path = os.path.join(BASE_DIR, target_folder)
         os.makedirs(target_dir_path, exist_ok=True)
 
-        # Extract 2 main colors
+        # Get next index (e.g., 39 if highest is 38)
+        next_index = get_next_sequence_number(target_dir_path)
+        num_prefix = f"{next_index:02d}"
+
+        # Extract dominant colors
         c1, c2 = extract_main_colors(file_path, num_colors=2)
         color_str = f"({c1},{c2})"
 
-        # Construct final name strictly according to your rules
-        if include_desc:
-            if description:
-                new_filename = f"{cat_prefix}-d-{description}-{color_str}{ext}"
-            else:
-                new_filename = f"{cat_prefix}-d-{color_str}{ext}"
+        # Build dynamic output filename
+        if include_desc and description:
+            new_filename = f"{num_prefix}-{cat_slug}-d-{description}-{color_str}{ext}"
+        elif include_desc:
+            new_filename = f"{num_prefix}-{cat_slug}-d-{color_str}{ext}"
         else:
-            new_filename = f"{cat_prefix}-{color_str}{ext}"
+            new_filename = f"{num_prefix}-{cat_slug}-{color_str}{ext}"
 
-        # Prevent file overwrites
         destination_path = os.path.join(target_dir_path, new_filename)
-        counter = 1
-        while os.path.exists(destination_path):
-            if include_desc and description:
-                new_filename = f"{cat_prefix}-d-{description}_{counter}-{color_str}{ext}"
-            elif include_desc:
-                new_filename = f"{cat_prefix}-d_{counter}-{color_str}{ext}"
-            else:
-                new_filename = f"{cat_prefix}_{counter}-{color_str}{ext}"
-            destination_path = os.path.join(target_dir_path, new_filename)
-            counter += 1
 
-        # Move file from staging to destination folder
+        # Move file to destination folder
         shutil.move(file_path, destination_path)
         print(f"Routed: {file_name}  -->  [{target_folder}]\\{new_filename}")
 
